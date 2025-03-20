@@ -4,12 +4,19 @@ import { checkValidation } from "../utils/Validation";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errors, setErrors] = useState(null);
+  const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
 
@@ -31,6 +38,27 @@ const Login = () => {
           // Signed up
           const user = userCredential.user;
           console.log(user);
+          updateProfile(user, {
+            displayName: name.current.value,
+            photoURL:
+              "https://i.pinimg.com/736x/92/b4/e7/92b4e7c57de1b5e1e8c5e883fd915450.jpg",
+          })
+            .then(() => {
+              console.log("username updated");
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+              navigate("/browse");
+            })
+            .catch((error) => {
+              console.error({ "error is": error });
+            });
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -49,7 +77,16 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
+          const { uid, email, displayName, photoURL } = user;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+              navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -86,6 +123,7 @@ const Login = () => {
           </h1>
           {!isSignInForm && (
             <input
+              ref={name}
               className="p-3 mx-4 bg-transparent border border-gray-600 rounded-md"
               type="text"
               placeholder="Full Name"
