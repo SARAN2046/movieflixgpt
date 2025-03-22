@@ -6,14 +6,13 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import { auth } from "../utils/Firebase";
 import { useDispatch } from "react-redux";
-import { addUser } from "../utils/userSlice";
-import { useNavigate } from "react-router-dom";
+import { addUser } from "../utils/UserSlice";
+import { bgImage, ProfileUrl } from "../utils/Constants";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errors, setErrors] = useState(null);
   const name = useRef(null);
@@ -35,16 +34,14 @@ const Login = () => {
         password.current.value
       )
         .then((userCredential) => {
-          // Signed up
           const user = userCredential.user;
           console.log(user);
           updateProfile(user, {
             displayName: name.current.value,
-            photoURL:
-              "https://i.pinimg.com/736x/92/b4/e7/92b4e7c57de1b5e1e8c5e883fd915450.jpg",
+            photoURL: ProfileUrl,
           })
             .then(() => {
-              console.log("username updated");
+              //console.log("username updated");
               const { uid, email, displayName, photoURL } = auth.currentUser;
               dispatch(
                 addUser({
@@ -54,7 +51,6 @@ const Login = () => {
                   photoURL: photoURL,
                 })
               );
-              navigate("/browse");
             })
             .catch((error) => {
               console.error({ "error is": error });
@@ -74,20 +70,7 @@ const Login = () => {
         email.current.value,
         password.current.value
       )
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          const { uid, email, displayName, photoURL } = user;
-              dispatch(
-                addUser({
-                  uid: uid,
-                  email: email,
-                  displayName: displayName,
-                  photoURL: photoURL,
-                })
-              );
-              navigate("/browse");
-        })
+        .then((userCredential) => {})
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
@@ -107,11 +90,7 @@ const Login = () => {
     <div>
       <Header />
       <div className="absolute z-1">
-        <img
-          className="min-h-screen"
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/42a0bce6-fc59-4c1c-b335-7196a59ae9ab/web/IN-en-20250303-TRIFECTA-perspective_d5f81427-d6cf-412d-8e86-2315671b9be1_small.jpg"
-          alt="bgimage"
-        />
+        <img className="min-h-screen" src={bgImage} alt="bgimage" />
       </div>
       <div className="flex justify-center items-center min-h-screen">
         <form

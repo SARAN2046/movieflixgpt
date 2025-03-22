@@ -1,27 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import { auth } from "../utils/Firebase";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { addUser, removeUser } from "../utils/UserSlice";
+import { Logo } from "../utils/Constants";
 
 const Header = () => {
   const user = useSelector((store) => store.user);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(
+          addUser({
+            uid: uid,
+            email: email,
+            displayName: displayName,
+            photoURL: photoURL,
+          })
+        );
+        navigate("/browse");
+      } else {
+        // User is signed out
+        dispatch(removeUser());
+        navigate("/");
+      }
+    });
+  }, []);
+
   const handleSignout = () => {
     signOut(auth)
-      .then(() => {
-        console.log('Sign-out successful')
-        navigate("/")
-      })
+      .then(() => {})
       .catch((error) => {
-        console.log({"signout error": error})
+        console.log({ "signout error": error });
       });
   };
   return (
-    <div className="absolute w-screen z-10 px-8 py-2 bg-gradient-to-b from-black flex justify-between">
+    <div className="absolute w-full  z-10 px-8 py-2 bg-gradient-to-b from-black flex justify-between">
       <img
         className="w-44"
-        src="https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production/consent/87b6a5c0-0104-4e96-a291-092c11350111/01938dc4-59b3-7bbc-b635-c4131030e85f/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
+        src={Logo}
         alt="logo"
       />
       {user && (
