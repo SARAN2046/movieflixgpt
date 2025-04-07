@@ -14,7 +14,7 @@ const Header = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName, photoURL } = user;
         dispatch(
@@ -32,6 +32,8 @@ const Header = () => {
         navigate("/");
       }
     });
+    // unsubscribe when component unmounts
+    return () => unsubscribe();
   }, []);
 
   const handleSignout = () => {
@@ -43,11 +45,7 @@ const Header = () => {
   };
   return (
     <div className="absolute w-full  z-10 px-8 py-2 bg-gradient-to-b from-black flex justify-between">
-      <img
-        className="w-44"
-        src={Logo}
-        alt="logo"
-      />
+      <img className="w-44" src={Logo} alt="logo" />
       {user && (
         <div className="flex my-auto">
           <p className="font-medium text-white px-3">{user?.displayName}</p>
