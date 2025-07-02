@@ -14,6 +14,7 @@ dist-ssr
 Constants.jsx
 Firebase.jsx
 
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
