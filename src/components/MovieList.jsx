@@ -21,7 +21,7 @@ const MovieList = ({ title, movies }) => {
   return (
     <div className="relative">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl py-4">{title}</h1>
+        <h1 className="text-2xl py-4">{title}</h1>
         <div>
           <button className="p-2 text-2xl" onClick={scrollLeft}>
             ⬅️
@@ -41,7 +41,9 @@ const MovieList = ({ title, movies }) => {
         }}
       >
         {movies?.map((movie, index) => (
-          <MovieCard key={index} posterpath={movie?.poster_path} />
+          <div className="min-w-[200px] hover:scale-110 transition-transform duration-300">
+            <MovieCard key={index} posterpath={movie?.poster_path} />
+          </div>
         ))}
       </div>
     </div>
