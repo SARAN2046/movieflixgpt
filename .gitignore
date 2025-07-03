@@ -11,8 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
-Constants.jsx
-Firebase.jsx
+src/utils/Constants/
+src/utils/Firebase/
 
 
 # Editor directories and files
